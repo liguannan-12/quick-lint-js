@@ -399,6 +399,21 @@ TEST_F(Test_Parse_Warning, warn_on_pointless_nullish_coalescing_operator) {
   }
 }
 
+
+// Regression tests for quick-lint-js issue #1233.
+TEST_F(Test_Parse_Warning, warn_on_nullish_coalescing_mixed_with_comparison) {
+  test_parse_and_visit_expression(
+      u8"config?.items?.length ?? 0 > 0"_sv,  //
+      u8"                      ^^ Diag_Nullish_Coalescing_With_Comparison"_diag);
+}
+
+TEST_F(Test_Parse_Warning,
+       do_not_warn_on_parenthesized_nullish_coalescing_comparison) {
+  test_parse_and_visit_expression(
+      u8"(config?.items?.length ?? 0) > 0"_sv, no_diags);
+}
+
+
 TEST_F(Test_Parse_Warning, warn_on_variable_assigned_to_self_is_noop) {
   test_parse_and_visit_statement(
       u8"x = x"_sv,  //
